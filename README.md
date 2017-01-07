@@ -1,0 +1,2 @@
+# motdujour
+mot du jour
