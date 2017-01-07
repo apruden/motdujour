@@ -1,0 +1,10 @@
+{
+  "name": "motdujour",
+  "app_id": "",
+  "v2": true,
+  "typescript": true,
+  "proxies": [{
+    "path": "/api",
+    "proxyUrl": "http://localhost:8999/api"
+  }]
+}

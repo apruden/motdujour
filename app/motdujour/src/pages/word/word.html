@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{ 'wordOfTheDay' | translate }}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-card>
+    <ion-card-header>
+      {{entry.word}}
+    </ion-card-header>
+    <ion-card-content>
+      <div [innerHTML]="entry.description"></div>
+    </ion-card-content>
+  </ion-card>
+  <button ion-button (click)="goToStats()">{{ 'stats' | translate }}</button> 
+</ion-content>

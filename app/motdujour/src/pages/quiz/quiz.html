@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ 'remember' | translate }}</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-card *ngFor="let q of questions">
+    <ion-card-content>
+<ion-icon *ngIf="q.result === 1" name="checkmark-circle" color="primary"></ion-icon><ion-icon *ngIf="q.result === 0" name="alert" color="danger"></ion-icon>
+{{ q.text }}
+      <ion-list>
+        <ion-item>
+          <ion-label stacked>{{'answer' | translate}}</ion-label>
+          <ion-input [disabled]="sent" type="text" [(ngModel)]="q.userAnswer"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="q.result === 0">
+          <h4>{{'correctAnswer' | translate}}</h4>
+          <p><strong>{{ q.answer }}</strong></p>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <button ion-button *ngIf="!sent" (click)="sendResponse()">{{ 'send' | translate }}</button> 
+  <button ion-button (click)="goToNext()">{{ 'start' | translate }}</button> 
+</ion-content>
