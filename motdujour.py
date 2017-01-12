@@ -18,7 +18,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 db = SqliteQueueDatabase(
-    'app.db',
+    'data/app.db',
     use_gevent=True,
     autostart=True,
     queue_max_size=64,
@@ -118,6 +118,7 @@ def get_words_me():
     now = datetime.datetime.now().date()
     get_word(now)
 
+    print '<<<<<<<<<<<<<<<'
     entry = Entry.select().where(Entry.date == now).get()
 
     return model_to_dict(entry)
@@ -126,12 +127,25 @@ def get_words_me():
 def get_word(date):
     try:
         c = 0
+        wordtext = None
+        fr = None
         while c < 10:
-            wid = random.randint(100, 1000)
-            word = Word.select().where(Word.id == wid).get()
-            html_doc = requests.get('https://fr.m.wiktionary.org/w/index.php?title=%s&printable=yes' % (urllib.quote(word.text),)).text
-            soup = BeautifulSoup(html_doc, 'html.parser')
-            fr = soup.find('span', {'id': 'fr'})
+            try:
+                wid = random.randint(100, 1000)
+                word = Word.select().where(Word.id == wid).get()
+                wordtext = word.text
+                print '>>>> %s %s' % (wid, word.text)
+                html_doc = requests.get('https://fr.m.wiktionary.org/w/index.php?title=%s&printable=yes' % (urllib.quote(wordtext),)).text
+                print '>>>1'
+                soup = BeautifulSoup(html_doc, 'html.parser')
+                print '>>>2'
+                fr = soup.find('span', {'id': 'fr'})
+                print '>>>3'
+                if fr:
+                    break
+            except Exception, e:
+                print 'uuuu %s' % e
+
             c += 1
 
         if not fr:
@@ -148,15 +162,22 @@ def get_word(date):
 
         q = ''
         if ol:
-            li = ol.find('li')
-            q = li.getText()
+            q = ol.find('li')
 
-        Entry.create(date=date, word=word.text, description=str(ol), question=str(q))
-        Entry.create(date=date - datetime.timedelta(3), word=word.text, description=str(ol), question=str(q))
-        Entry.create(date=date - datetime.timedelta(7), word=word.text, description=str(ol), question=str(q))
+        try:
+            desc = str(ol)
+            ques = str(q)  #q.decode('utf-8', 'ignore')
+        except Exception, e:
+            print('{{{{', e)
+            raise
+
+        Entry.create(date=date, word=word.text, description=desc, question=ques)
+        Entry.create(date=date - datetime.timedelta(3), word=word.text, description=desc, question=ques)
+        Entry.create(date=date - datetime.timedelta(7), word=word.text, description=desc, question=ques)
         db.commit()
 
     except Exception as e:
+        print('+++++=')
         print(e)
 
 

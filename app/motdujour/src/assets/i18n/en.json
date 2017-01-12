@@ -1,8 +1,16 @@
 {
-    "stats": "Resultats",
+    "stats": "Results",
     "motDuJour": "Mot du Jour",
-    "quiz": "Retenez",
-    "start": "Commencer",
-    "send": "Envoyer",
-    "next": "Suivant"
+    "quiz": "Quiz",
+    "start": "Start",
+    "send": "Send",
+    "next": "Next",
+    "answer": "Answer",
+    "correctAnswer": "Right answer",
+    "welcome": "Welcome!",
+    "wordOfTheDay": "Word of the Day",
+    "day": "Days",
+    "week": "Week",
+    "month": "Month",
+    "pleaseWait": "Please wait..."
 }

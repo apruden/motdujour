@@ -6,7 +6,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-card>
+  <ion-card *ngIf="lineChartData.length > 0">
     <ion-card-content>
       <canvas baseChart
         [datasets]="lineChartData"
@@ -14,8 +14,7 @@
         [options]="lineChartOptions"
         [legend]="lineChartLegend"
         [chartType]="lineChartType"
-        (chartHover)="chartHovered($event)"
-        (chartClick)="chartClicked($event)"></canvas>
+        ></canvas>
     </ion-card-content>
   </ion-card>
 </ion-content>

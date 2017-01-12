@@ -2,7 +2,7 @@ from lxml import etree
 import json
 
 words = set()
-context = etree.iterparse('data.xml', events=('end',), tag='LITERAL')
+context = etree.iterparse('data/wordnet.xml', events=('end',), tag='LITERAL')
 
 for event, elem in context:
     #print('%s\n' % elem.text)
