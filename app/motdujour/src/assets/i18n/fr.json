@@ -12,5 +12,6 @@
     "day": "Jours",
     "week": "Semaine",
     "month": "Mois",
-    "pleaseWait": "Veuillez attendre ..."
+    "pleaseWait": "Veuillez attendre ...",
+    "noResults": "Aucun résultat"
 }

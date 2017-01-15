@@ -7,12 +7,7 @@ logger = logging.getLogger('peewee')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
-db = SqliteQueueDatabase(
-    'data/app.db',
-    use_gevent=True,
-    autostart=True,
-    queue_max_size=64,
-    results_timeout=5.0)
+db = SqliteDatabase('data/app.db')
 
 class Word(Model):
     text = CharField()

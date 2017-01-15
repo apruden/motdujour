@@ -22,7 +22,7 @@ export class StatsPage {
               let day = [];
               let week = [];
               let month = [];
-              data.forEach( e => {
+              data.forEach(e => {
                 month.push(e.month);
                 week.push(e.week);
                 day.push(e.day);
@@ -32,28 +32,6 @@ export class StatsPage {
                 {data: week, label: labels.week},
                 {data: month, label: labels.month}
               ];
-            } else {
-              let loader = this.loadingCtrl.create({
-                content: translateService.instant(labels.pleaseWait)
-              });
-              loader.present();
-
-              http.get('/api/stats/1').map(res => res.json()).subscribe(data => {
-                loader.dismiss();
-                let day = [];
-                let week = [];
-                let month = [];
-                data.forEach( e => {
-                  month.push(e.month);
-                  week.push(e.week);
-                  day.push(e.day);
-                });
-                this.lineChartData = [
-                  {data: day, label: labels.day},
-                  {data: week, label: labels.week},
-                  {data: month, label: labels.month}
-                ];
-              });
             }
           });
         });
@@ -63,7 +41,14 @@ export class StatsPage {
   public lineChartLabels:Array<any> = [];
   public lineChartOptions:any = {
     animation: false,
-    responsive: true
+    responsive: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero:true
+        }
+      }]
+    }
   };
   public lineChartLegend:boolean = true;
   public lineChartType:string = 'line';

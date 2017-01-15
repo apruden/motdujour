@@ -4,16 +4,14 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <ion-card *ngIf="questions.length === 0">
-    <p>{{ 'welcome' | translate }}</p>
-  </ion-card>
+  <p *ngIf="questions.length === 0">{{ 'welcome' | translate }}</p>
   <ion-card *ngFor="let q of questions">
     <ion-card-content>
       <div [innerHTML]="q.text"></div>
       <ion-list>
         <ion-item>
           <ion-label stacked>{{'answer' | translate}} </ion-label>
-          <ion-input [disabled]="sent" type="text" [(ngModel)]="q.userAnswer" required></ion-input>
+          <ion-input [disabled]="sent" type="text" [(ngModel)]="q.userAnswer" required placeholder="{{'enterAnswer' | translate}}"></ion-input>
         </ion-item>
         <ion-item *ngIf="q.result === 0">
           <h4>{{'correctAnswer' | translate}}</h4>
@@ -29,5 +27,9 @@
     </ion-row>
   </ion-card>
   <button ion-button *ngIf="!sent && questions.length > 0" (click)="sendResponse()">{{ 'send' | translate }}</button> 
-  <button ion-button (click)="goToNext()">{{ 'start' | translate }}</button> 
+  <button ion-button (click)="goToNext()">{{ 'start' | translate }}</button>
+  <p *ngIf="questions.length !== 0">
+  <a href="https://fr.wiktionary.org" target="_blank">Source Wiktionnaire</a>. Content is available under license
+  <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.
+  </p>
 </ion-content>

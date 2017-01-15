@@ -3,7 +3,7 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import { NavController } from 'ionic-angular';
 import { LoadingController } from 'ionic-angular';
-import {TranslateService} from 'ng2-translate';
+import { TranslateService } from 'ng2-translate';
 
 @Component({
   selector: 'page-quiz',
@@ -18,33 +18,44 @@ export class QuizPage {
               public storage: Storage,
               public loadingCtrl: LoadingController,
               public translateService: TranslateService) {
-    this.storage.get('lastAnswer').then((val)=> {
-      if(!val || val.date !== this.toDate(new Date())) {
-        let loader = this.loadingCtrl.create({
-          content: translateService.instant('pleaseWait')
-        });
-        loader.present();
-        http.get('/api/questions').map(res => res.json()).subscribe(questions => {
-          loader.dismiss();
-          questions.forEach(q => {
-            q.text = q.text.replace(new RegExp(q.answer, 'ig'), '???');
+    this.storage.get('lastAnswer').then((lastAnswer) => {
+      this.storage.get('stats').then((stats) => {
+        let now = this.toDate(new Date());
+        if (!lastAnswer || lastAnswer.date !== now) {
+          let lastDate = lastAnswer && lastAnswer.date ? lastAnswer.date : now;
+          let lastStatsDate = stats && stats.length && stats[0].date ? stats[0].date : now;
+          let fro = Math.min(lastDate, lastStatsDate);
+
+          let loader = this.loadingCtrl.create({
+            content: translateService.instant('pleaseWait')
           });
-          this.questions = questions;
-        });
-      } else {
-        this.questions = val.questions;
-        this.sent = true;
-      }
+          loader.present();
+          http.get('/api/questions?from=' + fro).map(res => res.json()).subscribe(questions => {
+            loader.dismiss();
+            questions.forEach(q => {
+              q.text = q.text.replace(new RegExp(q.answer, 'ig'), '<strong style="color: red;">__à completer__</strong>');
+            });
+            this.questions = questions;
+          });
+        } else {
+          this.questions = lastAnswer.questions;
+          this.sent = true;
+        }
+      });
     });
   }
 
   toDate(date: Date) {
-    return '' + date.getUTCFullYear() + '-' + date.getUTCMonth() + '-' + date.getUTCDate();
+    let m = date.getUTCMonth() + 1;
+    let d = date.getUTCDate();
+    return parseInt('' + date.getUTCFullYear() + '' + (m < 10 ? '0' + m : m)  + '' + (d < 10 ? '0' + d : d), 10);
   }
 
   sendResponse() {
+    let now = this.toDate(new Date());
     this.questions.forEach(q => q.result = q.userAnswer === q.answer ? 1 : 0);
     let data = {
+      'date': now,
       'day': this.questions[0] === undefined ? 1 : this.questions[0].result,
       'week': this.questions[1] === undefined ? 1 : this.questions[1].result,
       'month': this.questions[2] === undefined ? 1 : this.questions[2].result
@@ -54,31 +65,28 @@ export class QuizPage {
 
     this.storage.get('stats').then(stats => {
       let a = 0.3;
-
-      if (stats === null) {
-        stats = [{day: 1, week: 1, month: 1}];
-      }
-
       let b = stats[stats.length - 1];
       let n = {
+        date: data.date,
         day: a * data.day + (1 - a) * b.day,
-        week: a * data.week + (1-a) * b.week,
-        month: a * data.month + (1-a) * b.month
+        week: a * data.week + (1 - a) * b.week,
+        month: a * data.month + (1 - a) * b.month
       };
       stats.push(n);
-      this.storage.set('stats', stats);
+      this.storage.set('stats', stats.splice(0, 60));
     });
 
     this.sent = true;
     this.storage.set('lastAnswer', {
-      date: this.toDate(new Date()),
+      date: now,
       questions: this.questions
     });
 
     this.storage.get('user').then(user => {
       let currentUser = user;
+
       if(!user) {
-        currentUser = {uid: new Date().getTime()};
+        currentUser = {uid: now};
         this.storage.set('user', currentUser);
       }
 

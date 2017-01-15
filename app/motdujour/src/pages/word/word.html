@@ -14,5 +14,11 @@
       <div [innerHTML]="entry.description"></div>
     </ion-card-content>
   </ion-card>
+  <div>
+    <p>
+    <a href="{{entry.sourceUrl}}" target="_blank">Source Wiktionnaire</a>. Content is available under license
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank">CC BY-SA 3.0</a>.
+    </p>
+  </div>
   <button ion-button (click)="goToStats()">{{ 'stats' | translate }}</button> 
 </ion-content>
