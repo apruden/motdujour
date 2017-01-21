@@ -45,6 +45,9 @@ class Connection(Model):
     class Meta:
         database = db
 
+class Registration(Model):
+    data = TextField()
+
 
 class Stats(Model):
     uid = IntegerField()
@@ -86,6 +89,11 @@ def get_stats(id):
     res = [model_to_dict(s) for s in Stats.select().where(Stats.uid == id).limit(60)]
     response.content_type = 'application/json'
     return json.dumps(res, cls=MyJsonEncoder)
+
+
+@post('/api/_register')
+def register():
+    Registration.create(data=json.dumps(request.json))
 
 
 @post('/api/stats/<id:int>')
