@@ -45,8 +45,12 @@ class Connection(Model):
     class Meta:
         database = db
 
+
 class Registration(Model):
     data = TextField()
+
+    class Meta:
+        database = db
 
 
 class Stats(Model):
@@ -116,7 +120,7 @@ def update_stats(id):
 def questions():
     now = datetime.datetime.now().date()
     fro = datetime.datetime.strptime(request.query['from'], '%Y%m%d').date() if 'from' in request.query else now - datetime.datetime(30)
-    res = [{'date': e.date, 'text': e.question, 'answer': e.word, 'sourceUrl': e.sourceUrl} for e in Entry.select().where(Entry.date << [now - datetime.timedelta(1), now - datetime.timedelta(7), now - datetime.timedelta(30)] & Entry.date >= fro)]
+    res = [{'date': e.date, 'text': e.question, 'answer': e.word, 'sourceUrl': e.sourceUrl} for e in Entry.select().where((Entry.date << [now - datetime.timedelta(1), now - datetime.timedelta(7), now - datetime.timedelta(30)]) & (Entry.date >= fro))]
     response.content_type = 'application/json'
     return json.dumps(res, cls=MyJsonEncoder)
 
